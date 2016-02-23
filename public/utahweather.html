@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=width-device, initial-scale=1">
+  <link rel="stylesheet" href="weather.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/darkly/bootstrap.min.css">
+  <title>Utah Weather</title>
+</head>
+<body>
+    <div id = "jumbo" class="jumbotron col-xs-offset-3 col-xs-6">
+      <h2>City Finder</h2>
+      <br/>
+      <h3>Enter a Utah City:</h3>
+      <input type="text" id="cityfield" value="">
+      <button role="button" id="button" type="submit">Submit</button>
+      <h3>Suggestions:</h3>
+      <h5 id="txtHint"></h5>
+      <p>City</p>
+      <textarea id="dispcity">No City</textarea>
+      <h3>Current Weather</h3>
+      <div id="weather"></div>
+    </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script>$(document).ready(function(){
+ 				$("#cityfield").keyup(function(){
+ 					var url="../getcity?q="+$("#cityfield").val();
+					$.getJSON(url,function(data){
+
+ 						var everything;
+						everything="";
+ 						$.each(data,function(i,item){
+ 							everything+="<p> "+data[i].city+"</p>";
+ 						});
+ 						$("#txtHint").html(everything);
+ 						});
+ 					$("txtHint").text("Keyup "+$("#cityfield").val());
+ 				});
+ 				$("#button").click(function(e){
+   					var value = $("#cityfield").val();
+var value = $("#cityfield").val();
+ 					console.log(value);
+   					e.preventDefault();
+   					$("#dispcity").text(value);
+   					var myurl= "https://api.wunderground.com/api/ed6282be84bcb29a/geolookup/conditions/q/UT/";
+ 					myurl += value;
+ 					myurl += ".json";
+ 					console.log(myurl);
+ 					$.ajax({
+ 						url : myurl,
+ 					    	dataType : "jsonp",
+ 					    	success : function(parsed_json) {
+ 							var location = parsed_json['location']['city'];
+ 					      		var temp_string = parsed_json['current_observation']['temperature_string'];
+ 					      		var current_weather = parsed_json['current_observation']['weather'];
+ 					      		everything = "";
+ 					      		everything += "<p>Location: "+location+"</p>";
+ 					      		everything += "<p>Temperature: "+temp_string+"</p>";
+ 					      		everything += "<p>Weather: "+current_weather+"</p>";
+ 					      		$("#weather").html(everything);
+ 								if (current_weather.indexOf("Clear") > -1)
+ 								{
+ 									document.body.style.backgroundImage = "url('http://www.zastavki.com/pictures/originals/2014/Nature___Seasons___Spring_Clear_day_in_spring_field_067763_.jpg')";
+ 								}
+ 								else if(current_weather.indexOf("Sun") > -1)
+ 								{
+ 									document.body.style.backgroundImage = "url('https://49.media.tumblr.com/cba2767f9f2773952a2e8f07c83ff376/tumblr_n1pt2g0EBm1sg3qr6o1_500.gif')";
+ 								}
+ 								else if(current_weather.indexOf("Cloud") > -1)
+ 								{
+ 									document.body.style.backgroundImage = "url('http://fc09.deviantart.net/fs71/f/2011/194/a/8/a8aae169213863628351b0657b0d63b5-d3oreup.gif')";
+ 								}
+ 								else if(current_weather.indexOf("Snow") > -1)
+ 								{
+ 									document.body.style.backgroundImage = "url('http://www.lovethisgif.com/uploaded_images/3665-Snowy-Days.gif?1')";
+ 								}
+ 								else
+ 								{
+ 									document.body.style.backgroundColor = "black";
+ 									document.body.style.backgroundImage = "";
+ 									
+ 								}
+ 					    	}
+ 					 });
+ 				});
+ 			});
+ 		</script>
+</body>
+</html>
